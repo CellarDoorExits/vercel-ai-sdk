@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --external cellar-door-exit --external cellar-door-entry --external zod --external @langchain/core --external ai",
     "test": "vitest run"
   },
   "repository": {
