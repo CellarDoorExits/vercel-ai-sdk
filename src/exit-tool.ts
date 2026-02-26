@@ -35,7 +35,7 @@ export const exitMarkerTool = tool({
       .optional()
       .describe("Human-readable reason for departure"),
   }),
-  execute: async ({ origin, exitType, reason }) => {
+  execute: async ({ origin, exitType, reason }: { origin: string; exitType?: string; reason?: string }) => {
     const result: QuickExitResult = quickExit(origin, {
       exitType: exitType as ExitType | undefined,
       reason,
