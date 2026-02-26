@@ -64,6 +64,6 @@ async function executeExitTool({ origin, exitType, reason }: ExitToolInput): Pro
 export const exitMarkerTool = tool<ExitToolInput, ExitMarkerToolResult>({
   description:
     "Create a cryptographically signed EXIT departure marker. Use this when you are concluding a session, departing a platform, or need to produce a verifiable record of agent departure. Returns a signed marker as JSON.",
-  parameters: exitToolParams,
+  inputSchema: exitToolParams,
   execute: executeExitTool,
 });
