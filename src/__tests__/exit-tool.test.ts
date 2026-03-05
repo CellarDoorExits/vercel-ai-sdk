@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { exitMarkerTool } from "../exit-tool.js";
+import { exitMarkerTool, exitToolParams } from "../exit-tool.js";
 
 describe("exitMarkerTool", () => {
   it("has a valid tool description", () => {
@@ -8,20 +8,20 @@ describe("exitMarkerTool", () => {
   });
 
   it("has parameters schema with required origin", () => {
-    expect(exitMarkerTool.parameters).toBeDefined();
-    // Zod schema should parse valid input
-    const parsed = exitMarkerTool.parameters.parse({
+    // Vercel AI SDK tool() exposes schema as inputSchema, not parameters
+    expect(exitToolParams).toBeDefined();
+    const parsed = exitToolParams.parse({
       origin: "test-platform",
     });
     expect(parsed.origin).toBe("test-platform");
   });
 
   it("rejects missing origin", () => {
-    expect(() => exitMarkerTool.parameters.parse({})).toThrow();
+    expect(() => exitToolParams.parse({})).toThrow();
   });
 
   it("accepts optional exitType and reason", () => {
-    const parsed = exitMarkerTool.parameters.parse({
+    const parsed = exitToolParams.parse({
       origin: "test",
       exitType: "voluntary",
       reason: "session complete",
