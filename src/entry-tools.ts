@@ -8,6 +8,8 @@ import {
   quickEntry,
   evaluateAdmission,
   verifyTransfer,
+  validateArrivalMarker,
+  MAX_MARKER_SIZE,
   OPEN_DOOR,
   STRICT,
   EMERGENCY_ONLY,
@@ -128,6 +130,17 @@ async function executeEvaluateAdmission({ exitMarkerJson, policy: policyName }: 
 async function executeVerifyTransfer({ exitMarkerJson, arrivalMarkerJson }: VerifyTransferInput): Promise<VerifyTransferResult> {
   const exitMarker = fromJSON(exitMarkerJson);
   let arrivalMarker: any;
+
+  // S-05: Validate arrival marker with size limits and structural checks
+  if (arrivalMarkerJson.length > MAX_MARKER_SIZE) {
+    return {
+      verified: false,
+      transferTime: null,
+      errors: [`Arrival marker JSON too large: ${arrivalMarkerJson.length} bytes (max ${MAX_MARKER_SIZE})`],
+      continuity: null,
+    };
+  }
+
   try {
     arrivalMarker = JSON.parse(arrivalMarkerJson);
   } catch {
@@ -135,6 +148,16 @@ async function executeVerifyTransfer({ exitMarkerJson, arrivalMarkerJson }: Veri
       verified: false,
       transferTime: null,
       errors: ["Invalid arrival marker JSON: failed to parse"],
+      continuity: null,
+    };
+  }
+
+  const validation = validateArrivalMarker(arrivalMarker);
+  if (!validation.valid) {
+    return {
+      verified: false,
+      transferTime: null,
+      errors: validation.errors.map((e: string) => `VALIDATION: ${e}`),
       continuity: null,
     };
   }
