@@ -15,7 +15,7 @@ describe("verifyAndAdmitAgentTool", () => {
   it("admits a valid EXIT marker and creates arrival", async () => {
     const exitJson = makeExitMarkerJson("source-platform");
     const result = await verifyAndAdmitAgentTool.execute(
-      { exitMarkerJson: exitJson, destination: "dest-platform" },
+      { exitMarkerJson: exitJson, destination: "dest-platform", admissionPolicy: "OPEN_DOOR" },
       { toolCallId: "t1", messages: [], abortSignal: undefined as any },
     );
     expect(result.admitted).toBe(true);

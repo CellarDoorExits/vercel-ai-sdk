@@ -36,7 +36,7 @@ const verifyAndAdmitParams = z.object({
   admissionPolicy: z
     .enum(["OPEN_DOOR", "STRICT", "EMERGENCY_ONLY"])
     .optional()
-    .describe("Admission policy preset to apply before admitting. Default: OPEN_DOOR"),
+    .describe("Admission policy preset to apply before admitting. Default: STRICT"),
 });
 
 const evaluateAdmissionParams = z.object({
@@ -90,7 +90,9 @@ export interface VerifyTransferResult {
 // ─── Execute functions ──────────────────────────────────────────────────────
 
 async function executeVerifyAndAdmit({ exitMarkerJson, destination, admissionPolicy }: VerifyAndAdmitInput): Promise<VerifyAndAdmitResult> {
-  const policyName = admissionPolicy ?? "OPEN_DOOR";
+  // PCR-39: Default to STRICT — never OPEN_DOOR — because an LLM can freely
+  // choose the most permissive policy or omit it entirely.
+  const policyName = admissionPolicy ?? "STRICT";
   const policy = admissionPresets[policyName];
   const exitMarker = fromJSON(exitMarkerJson);
   const admission = evaluateAdmission(exitMarker, policy);
