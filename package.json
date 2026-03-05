@@ -43,7 +43,7 @@
   "peerDependencies": {
     "ai": ">=4.0.0",
     "cellar-door-entry": ">=0.1.0",
-    "cellar-door-exit": ">=0.1.0"
+    "cellar-door-exit": ">=0.2.0"
   },
   "devDependencies": {
     "ai": ">=4.0.0",
