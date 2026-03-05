@@ -19,7 +19,7 @@ import {
 /**
  * Vercel AI SDK tool that creates a signed EXIT marker.
  */
-const exitToolParams = z.object({
+export const exitToolParams = z.object({
   origin: z
     .string()
     .describe("The platform or system being exited (e.g. 'openai-chat', 'slack-workspace')"),
