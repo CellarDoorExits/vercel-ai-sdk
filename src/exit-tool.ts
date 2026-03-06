@@ -45,7 +45,7 @@ export interface ExitMarkerToolResult {
 }
 
 async function executeExitTool({ origin, exitType, reason }: ExitToolInput): Promise<ExitMarkerToolResult> {
-  const result: QuickExitResult = quickExit(origin, {
+  const result: QuickExitResult = await quickExit(origin, {
     exitType: exitType as ExitType | undefined,
     reason,
     ...(exitType === "emergency" ? { emergencyJustification: reason ?? "Emergency exit" } : {}),

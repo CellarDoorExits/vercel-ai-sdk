@@ -63,7 +63,7 @@ export interface TransitMiddlewareOpts extends ExitMiddlewareOpts {
  */
 export function createExitOnFinish(opts: ExitMiddlewareOpts) {
   return async (event: { text: string; [key: string]: unknown }) => {
-    const { marker, identity } = quickExit(opts.origin, {
+    const { marker, identity } = await quickExit(opts.origin, {
       exitType: opts.exitType ?? ExitType.Voluntary,
     });
 
@@ -90,7 +90,7 @@ export function withExitMarker<T extends (...args: any[]) => any>(
       await originalOnFinish(...args);
     }
 
-    const { marker, identity } = quickExit(opts.origin, {
+    const { marker, identity } = await quickExit(opts.origin, {
       exitType: opts.exitType ?? ExitType.Voluntary,
     });
 
@@ -125,7 +125,7 @@ export function createEntryOnStart(exitMarkerJson: string, opts: EntryMiddleware
  */
 export function createTransitOnFinish(opts: TransitMiddlewareOpts) {
   return async (event: { text: string; [key: string]: unknown }) => {
-    const { marker, identity } = quickExit(opts.origin, {
+    const { marker, identity } = await quickExit(opts.origin, {
       exitType: opts.exitType ?? ExitType.Voluntary,
     });
 
