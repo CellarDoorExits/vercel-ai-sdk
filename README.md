@@ -1,5 +1,8 @@
 # @cellar-door/vercel-ai-sdk
 
+> **⚠️ Pre-release software — no formal security audit has been conducted.** This project is published for transparency, review, and community feedback. It should not be used in production systems where security guarantees are required. If you find a vulnerability, please report it to hawthornhollows@gmail.com.
+
+
 Vercel AI SDK integration for [`cellar-door-exit`](https://www.npmjs.com/package/cellar-door-exit) and [`cellar-door-entry`](https://www.npmjs.com/package/cellar-door-entry) — cryptographically signed, verifiable agent departure and arrival markers.
 
 Part of the [EXIT Protocol](https://github.com/CellarDoorExits/exit-door).
