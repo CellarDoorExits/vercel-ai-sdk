@@ -1,23 +1,34 @@
 # @cellar-door/vercel-ai-sdk
 
+[![npm version](https://img.shields.io/npm/v/@cellar-door/vercel-ai-sdk)](https://www.npmjs.com/package/@cellar-door/vercel-ai-sdk)
+[![tests](https://img.shields.io/badge/tests-18_passing-brightgreen)]()
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue)](./LICENSE)
+[![NIST](https://img.shields.io/badge/NIST-submitted-orange)](https://cellar-door.dev/nist/)
+
 > **⚠️ Pre-release software — no formal security audit has been conducted.** This project is published for transparency, review, and community feedback. It should not be used in production systems where security guarantees are required. If you find a vulnerability, please report it to hawthornhollows@gmail.com.
 
+Add verifiable departure and arrival records to your Vercel AI SDK agents.
 
-Vercel AI SDK integration for [`cellar-door-exit`](https://www.npmjs.com/package/cellar-door-exit) and [`cellar-door-entry`](https://www.npmjs.com/package/cellar-door-entry) — cryptographically signed, verifiable agent departure and arrival markers.
+## 🗺️ Ecosystem
 
-Part of the [EXIT Protocol](https://github.com/CellarDoorExits/exit-door).
+| Package | Description | npm |
+|---------|-------------|-----|
+| [cellar-door-exit](https://github.com/CellarDoorExits/exit-door) | Core protocol — departure markers | [![npm](https://img.shields.io/npm/v/cellar-door-exit)](https://www.npmjs.com/package/cellar-door-exit) |
+| [cellar-door-entry](https://github.com/CellarDoorExits/entry-door) | Arrival markers + admission | [![npm](https://img.shields.io/npm/v/cellar-door-entry)](https://www.npmjs.com/package/cellar-door-entry) |
+| [@cellar-door/mcp-server](https://github.com/CellarDoorExits/mcp-server) | MCP integration | [![npm](https://img.shields.io/npm/v/@cellar-door/mcp-server)](https://www.npmjs.com/package/@cellar-door/mcp-server) |
+| [@cellar-door/langchain](https://github.com/CellarDoorExits/langchain) | LangChain integration | [![npm](https://img.shields.io/npm/v/@cellar-door/langchain)](https://www.npmjs.com/package/@cellar-door/langchain) |
+| **[@cellar-door/vercel-ai-sdk](https://github.com/CellarDoorExits/vercel-ai-sdk)** | **Vercel AI SDK integration** ← you are here | [![npm](https://img.shields.io/npm/v/@cellar-door/vercel-ai-sdk)](https://www.npmjs.com/package/@cellar-door/vercel-ai-sdk) |
+| [@cellar-door/openclaw-skill](https://github.com/CellarDoorExits/openclaw-skill) | OpenClaw agent skill | [![npm](https://img.shields.io/npm/v/@cellar-door/openclaw-skill)](https://www.npmjs.com/package/@cellar-door/openclaw-skill) |
 
-## Install
+**[Paper](https://cellar-door.dev/paper/) · [Website](https://cellar-door.dev) · [NIST Submission](https://cellar-door.dev/nist/) · [Policy Briefs](https://cellar-door.dev/briefs/)**
+
+## Quick Start
 
 ```bash
 npm install @cellar-door/vercel-ai-sdk cellar-door-exit cellar-door-entry ai
 ```
 
-## EXIT Tools
-
-### Tool — Let the Agent Create EXIT Markers
-
-```ts
+```typescript
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { exitMarkerTool } from "@cellar-door/vercel-ai-sdk";
@@ -25,13 +36,16 @@ import { exitMarkerTool } from "@cellar-door/vercel-ai-sdk";
 const { text, toolResults } = await generateText({
   model: openai("gpt-4o"),
   tools: { exitMarker: exitMarkerTool },
-  prompt: "Complete the task and produce a departure marker.",
+  prompt: "Complete the task and produce a departure marker for did:web:platform.example",
 });
+
+// The agent creates a signed EXIT marker automatically
+// toolResults contains the verified marker JSON
 ```
 
-### Middleware — Automatic EXIT on Session End
+### Automatic EXIT on session end
 
-```ts
+```typescript
 import { streamText } from "ai";
 import { createExitOnFinish } from "@cellar-door/vercel-ai-sdk";
 
@@ -47,49 +61,46 @@ const result = await streamText({
 });
 ```
 
-## ENTRY Tools
+## EXIT Tools
 
-### Tool — Verify and Admit an Agent
+### Tool
 
 ```ts
-import { generateText } from "ai";
-import { verifyAndAdmitAgentTool } from "@cellar-door/vercel-ai-sdk";
-
-const { toolResults } = await generateText({
-  model: openai("gpt-4o"),
-  tools: { admitAgent: verifyAndAdmitAgentTool },
-  prompt: "Verify this EXIT marker and create an arrival.",
-});
-// The agent calls admitAgent with { exitMarkerJson, destination, admissionPolicy? }
+import { exitMarkerTool } from "@cellar-door/vercel-ai-sdk";
+// Drop into any generateText/streamText call
 ```
 
-### Tool — Evaluate Admission Policy
+### Middleware
+
+```ts
+import { createExitOnFinish } from "@cellar-door/vercel-ai-sdk";
+// Automatic EXIT marker on session end
+```
+
+## ENTRY Tools
+
+### Verify and Admit
+
+```ts
+import { verifyAndAdmitAgentTool } from "@cellar-door/vercel-ai-sdk";
+// Agent calls with { exitMarkerJson, destination, admissionPolicy? }
+```
+
+### Evaluate Admission Policy
 
 ```ts
 import { evaluateAdmissionTool } from "@cellar-door/vercel-ai-sdk";
-
 // Check if an EXIT marker meets a policy without creating an arrival
-const { toolResults } = await generateText({
-  model,
-  tools: { checkAdmission: evaluateAdmissionTool },
-  prompt: "Check if this departure meets STRICT policy.",
-});
 ```
 
-### Tool — Verify Transfer Chain
+### Verify Transfer Chain
 
 ```ts
 import { verifyTransferTool } from "@cellar-door/vercel-ai-sdk";
-
 // Verify a complete EXIT→ENTRY transfer
-const { toolResults } = await generateText({
-  model,
-  tools: { verifyTransfer: verifyTransferTool },
-  prompt: "Verify this transfer between platforms.",
-});
 ```
 
-### Middleware — Full Transit (EXIT + ENTRY)
+### Full Transit Middleware (EXIT + ENTRY)
 
 ```ts
 import { createTransitOnFinish } from "@cellar-door/vercel-ai-sdk";
@@ -116,7 +127,7 @@ const result = await streamText({
 
 ### ENTRY
 
-- **`verifyAndAdmitAgentTool`** — Verify EXIT marker + create arrival (with optional admission policy)
+- **`verifyAndAdmitAgentTool`** — Verify EXIT marker + create arrival
 - **`evaluateAdmissionTool`** — Check if EXIT marker meets an admission policy
 - **`verifyTransferTool`** — Verify a complete EXIT→ENTRY transfer chain
 - **`createEntryOnStart(exitMarkerJson, opts)`** — Create arrival on session start
