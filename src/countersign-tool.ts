@@ -52,11 +52,11 @@ async function executeCountersign({ markerJson, attestation }: CountersignToolIn
     witnessDid: identity.did,
     attestation: att,
     timestamp: ts,
-    signature: Buffer.from(sig).toString("base64"),
+    signature: btoa(String.fromCharCode(...sig)),
     signatureType: "Ed25519Signature2020",
   };
 
-  const updated = { ...marker, witnesses: [...(marker.witnesses ?? []), witness] };
+  const updated = { ...marker, witnesses: [...(((marker as any).witnesses) ?? []), witness] };
   const updatedJson = toJSON(updated as ExitMarker);
 
   return {
